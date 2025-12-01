@@ -1181,6 +1181,13 @@
                             'text-halo-width': 1
                         }
                     });
+                    
+                    // Debug: Log point features
+                    const pointFeatures = state.geojson.features.filter(f => f.geometry.type === 'Point');
+                    console.warn('Point features in GeoJSON:', pointFeatures.length);
+                    if (pointFeatures.length > 0) {
+                        console.warn('Sample point:', pointFeatures[0].geometry);
+                    }
                 } else {
                     map.getSource('wildfires').setData(state.geojson);
                 }
