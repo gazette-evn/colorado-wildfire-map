@@ -1182,15 +1182,6 @@
                         }
                     });
                     
-                    // Debug: Log point features and layer status
-                    const pointFeatures = state.geojson.features.filter(f => f.geometry && f.geometry.type === 'Point');
-                    console.warn('DEBUG: Point features in GeoJSON:', pointFeatures.length);
-                    console.warn('DEBUG: wildfire-point-circle layer exists:', !!map.getLayer('wildfire-point-circle'));
-                    console.warn('DEBUG: wildfire-point-symbol layer exists:', !!map.getLayer('wildfire-point-symbol'));
-                    if (pointFeatures.length > 0) {
-                        console.warn('DEBUG: Sample point geometry:', JSON.stringify(pointFeatures[0].geometry));
-                        console.warn('DEBUG: Sample point props:', JSON.stringify(pointFeatures[0].properties));
-                    }
                 } else {
                     map.getSource('wildfires').setData(state.geojson);
                 }
