@@ -810,9 +810,11 @@
                 geojson.features = geojson.features.filter((feature) => {
                     const props = feature.properties || {};
                     // Check various state fields in the NIFC data
-                    const fireState = props.attr_POOState || props.poly_POOState || props.attr_IncidentState || '';
-                    return fireState.toUpperCase() === STATE_ABBREV || 
-                           fireState.toLowerCase() === STATE_NAME.toLowerCase();
+                    // State codes can be "CO", "US-CO", "Colorado", etc.
+                    const fireState = (props.attr_POOState || props.poly_POOState || props.attr_IncidentState || '').toUpperCase();
+                    return fireState === STATE_ABBREV || 
+                           fireState === `US-${STATE_ABBREV}` ||
+                           fireState === STATE_NAME.toUpperCase();
                 });
                 console.log(`Filtered to ${geojson.features.length} ${STATE_NAME} fires`);
             }
