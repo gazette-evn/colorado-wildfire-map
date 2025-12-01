@@ -688,7 +688,8 @@
             const MAPBOX_TOKEN = window.MAPBOX_ACCESS_TOKEN || document.body.dataset.mapboxToken || '';
             const DATAWRAPPER_CHART_ID = document.body.dataset.datawrapperChart || '';
             const TOP_FIRE_LIMIT = Number(document.body.dataset.topFires || 5);
-            const GEOJSON_ENDPOINT = 'https://us-central1-sf-live-charts.cloudfunctions.net/serveNIFCGeojson';
+            // Use NIFC ArcGIS endpoint directly - filtered to current perimeters for this state
+            const GEOJSON_ENDPOINT = `https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_Current/FeatureServer/0/query?where=attr_POOState%3D%27US-${STATE_ABBREV}%27&outFields=*&f=geojson`;
             const DAY_MS = 86_400_000;
             const SIZE_BUCKETS = [
                 { id: 'mega', label: 'Mega • 100k+ acres', min: 100_000, max: null, color: '#ff4d4f' },
@@ -771,8 +772,7 @@
             map.on('load', async () => {
                 try {
                     const geojson = await fetchWildfireData();
-                    // Filter to only Colorado fires
-                    filterToState(geojson);
+                    // State filtering is now done by the API query
                     enrichFeatureProperties(geojson);
                     state.geojson = geojson;
                     rebuildFeatureLookup();
@@ -804,20 +804,6 @@
             window.addEventListener('resize', () => {
                 applyMapPadding();
             });
-
-            // Filter GeoJSON to only include fires in the target state
-            function filterToState(geojson) {
-                geojson.features = geojson.features.filter((feature) => {
-                    const props = feature.properties || {};
-                    // Check various state fields in the NIFC data
-                    // State codes can be "CO", "US-CO", "Colorado", etc.
-                    const fireState = (props.attr_POOState || props.poly_POOState || props.attr_IncidentState || '').toUpperCase();
-                    return fireState === STATE_ABBREV || 
-                           fireState === `US-${STATE_ABBREV}` ||
-                           fireState === STATE_NAME.toUpperCase();
-                });
-                console.log(`Filtered to ${geojson.features.length} ${STATE_NAME} fires`);
-            }
 
             function initializeStyleToggle() {
                 refs.styleButtons.forEach((button) => {
