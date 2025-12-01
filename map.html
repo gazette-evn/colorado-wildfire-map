@@ -1011,6 +1011,14 @@
 
             function computeCentroid(geometry) {
                 if (!geometry) return null;
+                
+                // Handle Point geometry directly
+                if (geometry.type === 'Point') {
+                    const [lng, lat] = geometry.coordinates || [];
+                    return (lng !== undefined && lat !== undefined) ? { lng, lat } : null;
+                }
+                
+                // Handle Polygon/MultiPolygon
                 let coords = [];
                 if (geometry.type === 'Polygon') {
                     coords = geometry.coordinates?.[0] || [];
