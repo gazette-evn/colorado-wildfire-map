@@ -676,10 +676,15 @@
             // ============================================================
             const STATE_NAME = 'Colorado';
             const STATE_ABBREV = 'CO';
-            // Colorado bounding box: SW corner to NE corner
+            // Colorado bounding box: SW corner to NE corner (with padding for context)
             const STATE_BOUNDS = [
-                [-109.5, 36.5],  // Southwest: Four Corners area
-                [-101.5, 41.5]   // Northeast: Nebraska border
+                [-109.5, 36.8],  // Southwest: Four Corners area
+                [-101.8, 41.2]   // Northeast: Nebraska border
+            ];
+            // Expanded bounds to prevent panning too far outside the state
+            const MAX_BOUNDS = [
+                [-112.0, 34.0],  // Southwest limit
+                [-99.0, 44.0]    // Northeast limit
             ];
             const STATE_CENTER = [-105.5, 39.0];  // Roughly Denver area
             const STATE_ZOOM = 6;
@@ -749,9 +754,10 @@
             const map = new mapboxgl.Map({
                 container: 'map',
                 style: MAPBOX_STYLES[state.baseStyle],
-                center: STATE_CENTER,
-                zoom: STATE_ZOOM,
-                minZoom: 4,
+                bounds: STATE_BOUNDS,
+                fitBoundsOptions: { padding: 20 },
+                maxBounds: MAX_BOUNDS,
+                minZoom: 5,
                 attributionControl: false
             });
 
